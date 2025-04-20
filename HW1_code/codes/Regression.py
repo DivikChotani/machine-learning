@@ -30,7 +30,9 @@ class Regression(object):
             # YOUR CODE HERE:
             # IMPLEMENT THE MATRIX X_out=[1, X]
             # ================================================================ #
-            
+            for row in range(len(X_out)):
+                X_out[row][0] = 1
+                X_out[row][1] = X[row]
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
@@ -39,7 +41,10 @@ class Regression(object):
             # YOUR CODE HERE:
             # IMPLEMENT THE MATRIX X_out=[1, X, x^2,....,X^m]
             # ================================================================ #
-                        
+            for row in range(len(X_out)):
+                X_out[row][0] = 1
+                for i in range(1, m+1):
+                    X_out[row][i] = X[row][0]**i
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
@@ -172,7 +177,9 @@ class Regression(object):
             # YOUR CODE HERE:
             # PREDICT THE TARGETS OF X 
             # ================================================================ #
-                    
+            x_bias = self.gen_features(X)
+
+            y_pred = x_bias @ self.w
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
@@ -181,7 +188,9 @@ class Regression(object):
             # YOUR CODE HERE:
             # IMPLEMENT THE MATRIX X_out=[1, X, x^2,....,X^m]
             # ================================================================ #
-                        
+            x_bias = self.gen_features(X)
+
+            y_pred = x_bias @ self.w       
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
