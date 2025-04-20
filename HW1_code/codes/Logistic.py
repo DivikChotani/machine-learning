@@ -26,7 +26,9 @@ class Logistic(object):
         # YOUR CODE HERE:
         # IMPLEMENT THE MATRIX X_out=[1, X]
         # ================================================================ #
-        
+        for row in range(len(X_out)):
+            X_out[row][0] = 1
+            X_out[row][1:] = X[row]
         # ================================================================ #
         # END YOUR CODE HERE
         # ================================================================ #
@@ -50,7 +52,15 @@ class Logistic(object):
         # save loss function in loss
         # Calculate the gradient and save it as grad
         # ================================================================ #
+        y = (y + 1) // 2
+        x = self.gen_features(X)
+        reg_param = (np.linalg.norm(self.w,ord=2)**2)
+        z = x @ self.w
+        loss = np.mean(np.log(1 + np.exp(z)) - y * z) + reg_param
         
+        y_hat = 1 / (1 + np.exp(-z))
+        error = y_hat - y
+        grad = (x.T @ error) / N
         # ================================================================ #
         # END YOUR CODE HERE
         # ================================================================ #
@@ -79,7 +89,9 @@ class Logistic(object):
                 # The indices should be randomly generated to reduce correlations in the dataset.  
                 # Use np.random.choice.  It is better to user WITHOUT replacement.
                 # ================================================================ #
-                
+                i = np.random.choice(N, batch_size, replace=False)
+                X_batch = X[i]
+                y_batch = y[i].reshape(-1, 1) 
                 # ================================================================ #
                 # END YOUR CODE HERE
                 # ================================================================ #
@@ -91,7 +103,8 @@ class Logistic(object):
                 # save loss as loss and gradient as grad
                 # update the weights self.w
                 # ================================================================ #
-                
+                loss, grad = self.loss_and_grad(X_batch, y_batch)
+                self.w = self.w - eta*grad
                 # ================================================================ #
                 # END YOUR CODE HERE
                 # ================================================================ #
@@ -111,7 +124,12 @@ class Logistic(object):
         # YOUR CODE HERE:
         # PREDICT THE LABELS OF X 
         # ================================================================ #
-                
+        x_bias = self.gen_features(X)
+
+        z = x_bias @ self.w
+        guess = 1 / (1 + np.exp(-z))
+        y_pred = (guess >= 0.5).astype(int)
+        y_pred = (y_pred * 2) -1
         # ================================================================ #
         # END YOUR CODE HERE
         # ================================================================ #
