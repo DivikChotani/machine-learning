@@ -71,7 +71,15 @@ class Regression(object):
             # Calculate the gradient and save it as grad
             #
             # ================================================================ #
+            y = y.reshape(-1, 1)
+            x = self.gen_poly_features(X)
+            y_pred = x @ self.w
+            diff = y_pred - y
+            loss = np.sum(diff**2)
             
+            grad = 2*x.T @ diff
+            loss = loss / (2*N)
+            grad = grad / N
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
@@ -80,10 +88,20 @@ class Regression(object):
             # YOUR CODE HERE:
             # Calculate the loss function of the polynomial regression with order m
             # ================================================================ #
-            
+            y = y.reshape(-1, 1)
+
+            x = self.gen_poly_features(X)
+            y_pred = x @ self.w
+            diff = y_pred - y
+
+            loss = np.sum(diff**2)
+            grad = 2*x.T @ diff
+            loss = loss / (2*N)
+            grad = grad / N
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
+
         return loss, grad
     
     def train_LR(self, X, y, eta=1e-3, batch_size=30, num_iters=1000) :
@@ -113,7 +131,9 @@ class Regression(object):
                 # The indices should be randomly generated to reduce correlations in the dataset.  
                 # Use np.random.choice.  It is better to user WITHOUT replacement.
                 # ================================================================ #
-                
+                i = np.random.choice(N, batch_size, replace=False)
+                X_batch = X[i]
+                y_batch = y[i].reshape(-1, 1) 
                 # ================================================================ #
                 # END YOUR CODE HERE
                 # ================================================================ #
@@ -125,7 +145,8 @@ class Regression(object):
                 # save loss as loss and gradient as grad
                 # update the weights self.w
                 # ================================================================ #
-                
+                loss, grad = self.loss_and_grad(X_batch, y_batch)
+                self.w = self.w - eta*grad
                 # ================================================================ #
                 # END YOUR CODE HERE
                 # ================================================================ #
@@ -141,12 +162,13 @@ class Regression(object):
         """
         m = self.m
         N,d = X.shape
+        loss = 0
         if m==1:
             # ================================================================ #
             # YOUR CODE HERE:
             # obtain the optimal weights from the closed form solution 
             # ================================================================ #
-            
+            pass
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
@@ -155,7 +177,7 @@ class Regression(object):
             # YOUR CODE HERE:
             # IMPLEMENT THE MATRIX X_out=[1, X, x^2,....,X^m]
             # ================================================================ #
-            
+            pass
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
@@ -177,9 +199,9 @@ class Regression(object):
             # YOUR CODE HERE:
             # PREDICT THE TARGETS OF X 
             # ================================================================ #
-            x_bias = self.gen_features(X)
-
+            x_bias = self.gen_poly_features(X)
             y_pred = x_bias @ self.w
+            y_pred = y_pred.ravel()
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
@@ -188,9 +210,9 @@ class Regression(object):
             # YOUR CODE HERE:
             # IMPLEMENT THE MATRIX X_out=[1, X, x^2,....,X^m]
             # ================================================================ #
-            x_bias = self.gen_features(X)
-
-            y_pred = x_bias @ self.w       
+            x_poly = self.gen_poly_features(X)
+            y_pred = x_poly @ self.w 
+            y_pred = y_pred.ravel()      
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
