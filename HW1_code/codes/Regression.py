@@ -169,10 +169,12 @@ class Regression(object):
             # obtain the optimal weights from the closed form solution 
             # ================================================================ #
             x = self.gen_poly_features(X)
-            self.w = np.linalg.inv(x.T @ x) @ x.T @ y
+            reg_matrix = np.eye(x.shape[1])
+            reg_matrix[0, 0] = 0 
+            self.w = np.linalg.inv(x.T @ x + self.reg *reg_matrix) @ x.T @ y
             y_pred = x @ self.w
             diff = y_pred - y
-            loss = np.sum(diff**2) / (2 * N)
+            loss = np.sum(diff**2) / (2 * N) + self.reg* np.sum(self.w[1:] ** 2)
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
@@ -182,10 +184,12 @@ class Regression(object):
             # IMPLEMENT THE MATRIX X_out=[1, X, x^2,....,X^m]
             # ================================================================ #
             x = self.gen_poly_features(X)
-            self.w = np.linalg.inv(x.T @ x) @ x.T @ y 
+            reg_matrix = np.eye(x.shape[1])
+            reg_matrix[0, 0] = 0 
+            self.w = np.linalg.inv(x.T @ x + self.reg *reg_matrix) @ x.T @ y
             y_pred = x @ self.w
             diff = y_pred - y
-            loss = np.sum(diff**2) / (2 * N)
+            loss = np.sum(diff**2) / (2 * N) + self.reg* np.sum(self.w[1:] ** 2)
       
             # ================================================================ #
             # END YOUR CODE HERE
